@@ -7,7 +7,6 @@ import queries.BorrowHistories.Item;
 import utils.DBInitializer;
 import utils.DatabaseConnector;
 import java.util.*;
-import org.junit.Assert;
 
 import java.sql.*;
 import java.util.List;

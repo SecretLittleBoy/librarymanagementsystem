@@ -1,12 +1,6 @@
 import utils.ConnectConfig;
 import utils.DatabaseConnector;
-import utils.RandomData;
-import entities.*;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang3.RandomUtils;
-import java.io.*;
-import java.util.*;
 
 public class Main {
     private static final Logger log = Logger.getLogger(Main.class.getName());

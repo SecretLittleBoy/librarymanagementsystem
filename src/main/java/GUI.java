@@ -6,16 +6,12 @@ import queries.BorrowHistories.Item;
 import queries.*;
 import javax.swing.*;
 
-import com.alibaba.fastjson.JSON;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Vector;
 
-import utils.*;
 
 public class GUI {
 	private LibraryManagementSystem library;
