@@ -12,13 +12,12 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Vector;
 
-
 public class GUI {
 	private LibraryManagementSystem library;
 	private Container c;
 	private JMenuBar mb;
-	private JMenu menuBook, menuCard, menuHistory;
-	private JMenuItem itemBook, itemCard, itemHistory;
+	private JMenu menuBook, menuCard;
+	private JMenuItem itemBook, itemCard;
 	private JFrame frame, cardFrame;
 	private JButton btdelete, btadd, btmodify, btsearch, btBorrowReturn;
 	private JLabel lbcategory, lbtitle, lbpress, lbminPublishYear, lbmaxPublishYear, lbauthor, lbminPrice, lbmaxPrice,
@@ -28,21 +27,11 @@ public class GUI {
 	private JTextField add_tfpublishYear, add_tfprice, add_tfstock, add_tfcategory,
 			add_tfauthor, add_tfpress, add_tftitle, add_tfdeltastock, modify_bookId;
 	private JTextField cardName, cardDepartment;
-	private JComboBox cardType;
+	private JComboBox<String> cardType;
 	private JTextField borrowReturn_tfCardId;
-	private JComboBox cbSortby;
-	private JComboBox cbSortorder;
-	private JTable tbquerybook,tbQueryCard;
-
-	private JTextField fieldUsername;
-	private JLabel labelStudentSurname;
-	private JTextField fieldStudentSurname;
-	private JButton buttonStudentSearch;
-	private JButton buttonClear;
-	private JButton buttonPrevious;
-	private JButton buttonNext;
-	private JButton buttonExit;
-	private JTextArea consoleScreen;
+	private JComboBox<String> cbSortby;
+	private JComboBox<String> cbSortorder;
+	private JTable tbquerybook, tbQueryCard;
 
 	public GUI(LibraryManagementSystem library) {
 		this.library = library;
@@ -112,13 +101,13 @@ public class GUI {
 		lbsortBy = new JLabel("Sort By:");
 		c.add(lbsortBy);
 		String[] sortby = { "book_id", "Category", "Title", "Press", "Publish Year", "Author", "Price" };
-		cbSortby = new JComboBox(sortby);
+		cbSortby = new JComboBox<String>(sortby);
 		c.add(cbSortby);
 
 		lbsortOrder = new JLabel("Sort Order:");
 		c.add(lbsortOrder);
 		String[] sortorder = { "Ascending", "Descending" };
-		cbSortorder = new JComboBox(sortorder);
+		cbSortorder = new JComboBox<String>(sortorder);
 		c.add(cbSortorder);
 
 		btsearch = new JButton("Search");
@@ -294,11 +283,11 @@ public class GUI {
 					BookQueryResults bqrst = ((BookQueryResults) library.queryBook(bqc).payload);
 					Vector<String> columnNames = new Vector<String>(Arrays.asList("book_id", "Category", "Title",
 							"Press", "Publish Year", "Author", "Price", "Stock"));
-					Vector<Vector> tablevalues = new Vector();
+					Vector<Vector<String>> tablevalues = new Vector<Vector<String>>();
 					System.out.println("BookQueryResults:");
 					bqrst.getResults().forEach((book) -> {
 						System.out.println(book.toString());
-						Vector<String> onerow = new Vector();
+						Vector<String> onerow = new Vector<String>();
 						onerow.add(Integer.toString(book.getBookId()));
 						onerow.add(book.getCategory());
 						onerow.add(book.getTitle());
@@ -317,7 +306,6 @@ public class GUI {
 					JScrollPane scrollPane = new JScrollPane(tbquerybook);
 					scrollPane.setBounds(0, 0, 9000, frame.getHeight());
 					frame.add(scrollPane, BorderLayout.CENTER);
-					//c.add(tbquerybook);
 				} catch (Exception expt) {
 					System.out.println("query fails");
 				}
@@ -327,13 +315,13 @@ public class GUI {
 				int[] selected = tbquerybook.getSelectedRows();
 				for (int i = 0; i < selected.length; i++) {
 					int bookid = Integer.parseInt((String) tbquerybook.getValueAt(selected[i], 0));
-					ApiResult result=library.removeBook(bookid);
+					ApiResult result = library.removeBook(bookid);
 					if (result.ok) {
 						JOptionPane.showMessageDialog(null, "delete success:\nplease refresh the search result",
 								"delete success",
 								JOptionPane.WARNING_MESSAGE);
 					} else {
-						JOptionPane.showMessageDialog(null, "delete failed:\n"+result.message,
+						JOptionPane.showMessageDialog(null, "delete failed:\n" + result.message,
 								"delete failed",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -776,16 +764,16 @@ public class GUI {
 				}
 				Vector<String> columnNames = new Vector<String>(Arrays.asList("cardId", "name", "department",
 						"type"));
-				Vector<Vector> tablevalues = new Vector();
+				Vector<Vector<String>> tablevalues = new Vector<Vector<String>>();
 				for (Card card : ((CardList) library.showCards().payload).getCards()) {
 					System.out.println("CardQueryResults:");
 					System.out.println(card.toString());
-					Vector<String> onerow = new Vector();
+					Vector<String> onerow = new Vector<String>();
 					onerow.add(Integer.toString(card.getCardId()));
 					onerow.add(card.getName());
 					onerow.add(card.getDepartment());
 					onerow.add(card.getType().getStr());
-					tablevalues.add(onerow);					
+					tablevalues.add(onerow);
 				}
 				tbQueryCard = new JTable(tablevalues, columnNames) {
 					public boolean isCellEditable(int row, int column) {
@@ -795,8 +783,7 @@ public class GUI {
 				JScrollPane scrollPane = new JScrollPane(tbQueryCard);
 				scrollPane.setBounds(0, 0, 9000, frame.getHeight());
 				cardFrame.add(scrollPane, BorderLayout.CENTER);
-				
-			}else if(e.getSource().toString().contains(",text=remove Card,")){
+			} else if (e.getSource().toString().contains(",text=remove Card,")) {
 				System.out.println("remove Card");
 				int[] selected = tbQueryCard.getSelectedRows();
 				for (int i = 0; i < selected.length; i++) {
@@ -823,7 +810,7 @@ public class GUI {
 				cardName = new JTextField(10);
 				cardDepartment = new JTextField(10);
 				String[] type = { "Teacher", "Student" };
-				cardType = new JComboBox(type);
+				cardType = new JComboBox<String>(type);
 				JButton button = new JButton("register card");
 				button.addActionListener(new handerRegisterCard());
 				JPanel panel = new JPanel(new GridLayout(4, 2));
@@ -844,9 +831,10 @@ public class GUI {
 							JOptionPane.WARNING_MESSAGE);
 					return;
 				}
-				Vector<String> columnNames = new Vector<String>(Arrays.asList("cardId", "bookId","book title", "borrow time",
-						"return time"));
-				Vector<Vector> tablevalues = new Vector();
+				Vector<String> columnNames = new Vector<String>(
+						Arrays.asList("cardId", "bookId", "book title", "borrow time",
+								"return time"));
+				Vector<Vector<String>> tablevalues = new Vector<Vector<String>>();
 				ApiResult result = library.showBorrowHistory(Integer.parseInt(
 						(String) tbQueryCard.getValueAt(tbQueryCard.getSelectedRow(), 0)));
 				if (!result.ok) {
@@ -861,10 +849,10 @@ public class GUI {
 					}
 				} catch (Exception expt) {
 				}
-				for (Item item : ((BorrowHistories)result.payload).getItems()) {
+				for (Item item : ((BorrowHistories) result.payload).getItems()) {
 					System.out.println("BorrowHistories:");
 					System.out.println(item.toString());
-					Vector<String> onerow = new Vector();
+					Vector<String> onerow = new Vector<String>();
 					onerow.add(Integer.toString(item.getCardId()));
 					onerow.add(Integer.toString(item.getBookId()));
 					onerow.add(item.getTitle());
@@ -888,13 +876,13 @@ public class GUI {
 
 	public class handerRegisterCard implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Card card=new Card(0, cardName.getText(), cardDepartment.getText(),
+			Card card = new Card(0, cardName.getText(), cardDepartment.getText(),
 					cardType.getSelectedIndex() == 0 ? CardType.Teacher : CardType.Student);
 			ApiResult result = library.registerCard(card);
 			if (result.ok) {
 				JOptionPane.showMessageDialog(null, "Id:" + card.getCardId() + " name:" + card.getName() +
-				" department:"+card.getDepartment()+" type:"+card.getType().getStr(),
-						"register success",JOptionPane.WARNING_MESSAGE);
+						" department:" + card.getDepartment() + " type:" + card.getType().getStr(),
+						"register success", JOptionPane.WARNING_MESSAGE);
 			} else {
 				JOptionPane.showMessageDialog(null, result.message,
 						"register failed",
